@@ -1,0 +1,206 @@
+
+i.login,
+i.ajuda{
+  position: absolute;
+  top: 18px;
+}
+
+i.login{
+  right: 10px;
+}
+i.ajuda{
+  right: 30px;
+}
+
+.sidebar{
+  background-color: #24272c;
+  min-width: 280px;
+  max-width: 280px;
+  min-height: 100%;
+  height: 100vh;
+  padding: 20px;
+  position: fixed;
+
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+
+  h2{
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+
+    .actions{
+      margin-right: 5px;
+      position: relative;
+      right: 12px;
+
+      .fa{
+        margin-right: 5px;
+      }
+
+      .fa{
+        font-size: 14px;
+        position: relative;
+        left: 25%;
+      }
+
+      i.set-host{
+        font-family: 'Poppins';
+        font-size: 12px;
+        top: -2px;
+        letter-spacing: .1px;
+      }
+    }
+  }
+
+  .senha-do-dia{
+    cursor: pointer;
+    font-weight: 400;
+    display: inline-block;
+
+    .full{
+      transition: all .2s;
+
+      &:hover,
+      &:hover + .final{
+        background-color: #727272;
+      }
+    }
+
+    .final{
+        transition: all .2s;
+
+      &:hover{
+        background-color: #727272;
+        padding: 0 2px;
+      }
+    }
+  }
+
+  .input-host{
+    min-height: 0;
+    max-height: 0;
+    // max-width: 0;
+    background-color: #24272c;
+    border-color: #24272c;
+    margin: 0;
+    font-size: 14px;
+    padding: 0 8px;
+    transition: all .2s;
+
+    &.active{
+      min-height: 30px;
+      max-height: 30px;
+      max-width: 100%;
+      background-color: #fff;
+      padding: 8px;
+    }
+  }
+
+  hr{
+    margin-top: 5px;
+  }
+
+  ul{
+    list-style: none;
+    padding: 0 15px;
+  }
+
+  .ghost{
+    background-color: #a3a3a3;
+    color: #24272c;
+    transition: all .2s;
+    a{
+      color: #24272c;
+    }
+  }
+
+  ul.root{
+    overflow-y: auto;
+    position: relative;
+    max-height: 80%;
+
+    li.group-item{
+      padding: 5px 0;
+      position: relative;
+      border-top: 1px solid #cacaca4d;
+
+      &:first-child{
+        border-top: none;
+      }
+
+      &.edit .handle::before{
+        font: normal normal 400 12px/1 FontAwesome;
+        content: '::';
+        position: absolute;
+        top: 14px;
+        cursor: move;
+        font-weight: 700;
+      }
+
+      &.edit a{
+        margin-left: 12px;
+
+        i.fa-edit{
+          opacity: 1;
+          pointer-events: all;
+          top: 0px;
+          right: 10px;
+        }
+      }
+
+      a{
+        display: flex;
+        justify-content: space-between;
+        margin-left: 0;
+        transition: all .2s;
+        padding: 5px 0;
+
+        i.fa{
+          font-size: 12px;
+          position: relative;
+          top: 0;
+          transition: .2s;
+
+          &.active{
+            transform: rotate(90deg);
+            top: 0;
+          }
+        }
+
+        i.fa-edit{
+          pointer-events: none;
+          opacity: 0;
+          transition: all .2s;
+        }
+      }
+
+      ul{
+        overflow-y: hidden;
+        max-height: 0;
+        transition: .3s;
+
+        &.active{
+          max-height: 1000px;
+          transition: .5s ease-in;
+        }
+
+        li.sub{
+          position: relative;
+          a{
+            padding: 2.5px 0;
+          }
+          .handle::before{
+            top: 8px;
+            left: -3px;
+          }
+        }
+      }
+    }
+  }
+}

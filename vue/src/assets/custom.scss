@@ -1,0 +1,133 @@
+*{
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+body{
+  background-color: #18191a;
+  color: #fafafa;
+  font-family: 'Poppins', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+#app{
+  display: flex;
+  width: 100%;
+}
+
+main{
+  padding: 40px;
+  width: 100%;
+}
+
+a{
+  text-decoration: none;
+  color: #cdcdcd;
+  cursor: pointer;
+}
+a:hover{
+  text-decoration: none;
+  color: #cdcdcd;
+  font-weight: 700;
+}
+
+*::placeholder{
+  color: #7f868ba8 !important;
+  font-weight: 100;
+}
+
+.btn-primary{
+  background: #414347 !important;
+  border-color: #414347 !important;
+}
+.btn-primary:hover{
+  background: #575a61 !important;
+  background-color: #575a61 !important;
+  border-color: #575a61 !important;
+}
+
+.mx-context-menu{
+  background: #393d44 !important;
+  background-color: #393d44 !important;
+  padding: 4px 0 !important;
+  border-radius: 5px !important;
+  z-index: 99999 !important;
+}
+
+.mx-context-menu-item{
+  padding: 4px 15px !important;
+}
+
+.mx-context-menu-item .text,
+.mx-context-menu-item .text .fa{
+  color: #fafafa !important;
+}
+.mx-context-menu-item:hover .text,
+.mx-context-menu-item:hover .text .fa{
+  color: #393d44 !important;
+}
+.mx-context-menu-item .text span{
+  padding-right: 0 !important;
+}
+
+.ck-content{
+  color: #18191a;
+  word-break: normal;
+}
+
+.hide{
+  display: none;
+}
+
+.conteudo{
+  table{
+    border: solid 1px #cdcdcd;
+    color: #fafafa;
+    border-collapse: collapse;
+
+    td{
+      border: solid 1px #cdcdcd;
+      padding: 3px 5px;
+    }
+  }
+}
+
+label.checkbox{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  input{
+    transform: scale(1.2);
+    margin-left: 3px;
+    margin-right: 3px;
+    position: relative;
+    top: 1px;
+  }
+}
+
+
+i.loading-icon::before{
+  content: '';
+  background-image: url(../assets/loading.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: inline-block;
+  width: 200px;
+  height: 200px;
+}
+
+i.action{
+  padding: 5px;
+  border-radius: 3px;
+  cursor: pointer;
+
+  &:hover{
+    color: #24272c;
+    background-color: #cacaca;
+  }
+}

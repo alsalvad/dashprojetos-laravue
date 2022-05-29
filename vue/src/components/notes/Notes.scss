@@ -1,0 +1,138 @@
+main{
+  margin-left: 280px;
+}
+
+.nav-link {
+  height: 45px;
+  color: #fff;
+  border: 1px solid #3e3e3e;
+  border-bottom: 1px solid #fff;
+}
+
+.novo-grupo{
+  color: #fff;
+  max-width: 45px;
+  overflow: hidden;
+  display: flex;
+  transition: all .2s;
+
+  .fa{
+    top: 5px;
+    position: relative;
+    transition: .2s;
+  }
+
+  .box{
+    margin-left: 20px;
+    display: inline-block;
+    transition: .2s;
+    max-height: 25px;
+
+    input{
+      max-height: 26px;
+      display: inline-block;
+      position: relative;
+      font-size: 14px;
+    }
+
+    .btn{
+      position: relative;
+      top: -26px;
+      left: 45%;
+      padding: 5px 6px;
+    }
+  }
+
+  &.expand{
+    max-width: 300px;
+
+    .box{
+      margin-left: -12px;
+    }
+  }
+}
+
+.nav-link.active{
+  max-width: 200px;
+}
+
+.edit-grupo-notes{
+  display: inline-block;
+  position: relative;
+
+  .btn-primary{
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 7px 10px;
+  }
+}
+
+#notes-tabContent{
+  padding-top: 7px;
+  position: relative;
+
+  .loading-notes{
+    padding: 10%;
+    width: 100%;
+    display: none;
+    position: absolute;
+    background-color: #18191a;
+
+    &.active{
+      display: block;
+    }
+
+    i.loading-icon{
+      position: relative;
+      left: 40%;
+      transform: translate(50%, 0);
+    }
+  }
+
+  .note-item{
+    padding: 15px;
+    background-color: #242526;
+    margin: 20px 0;
+    border-radius: 5px;
+    font-weight: 100;
+    white-space: break-spaces;
+
+    .header{
+      display: flex;
+      font-size: 10px;
+      color: #c7c8ca;
+      margin-bottom: 8px;
+
+      .info{
+        margin-right: 15px;
+      }
+
+      &:hover .actions{
+        display: block;
+      }
+
+      .actions{
+        display: none;
+
+        i{
+          cursor: pointer;
+          margin-right: 15px;
+          font-size: 12px;
+          color: #fff;
+
+          &.fa-trash{
+            position: relative;
+            bottom: 1px;
+            color: #dc3545;
+          }
+        }
+      }
+    }
+
+    table{
+      border: solid 1px #ffffff;
+      background-color: red;
+    }
+  }
+}

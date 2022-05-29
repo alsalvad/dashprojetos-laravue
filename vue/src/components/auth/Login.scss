@@ -1,0 +1,75 @@
+.login{
+  background-color: #242526;
+  width: 400px;
+  max-height: 330px;
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%, 0);
+  top: 0;
+  border-radius: 5px;
+  pointer-events: none;
+  opacity: 0;
+  transition: all .2s;
+  padding: 20px 40px;
+  box-shadow: rgb(98 98 98 / 83%) 0px 0px 17px;
+
+  &.active{
+    top: 100px;
+    pointer-events: all;
+    opacity: 1;
+  }
+
+  .form-group{
+    margin: 10px 0;
+  }
+
+  .actions{
+    position: relative;
+    top: 20px;
+
+    .btn-primary{
+      float: right;
+    }
+  }
+
+  .form-login{
+    display: none;
+
+    &.active{
+      display: block;
+    }
+  }
+
+  button.alterar-senha{
+    position: absolute;
+    right: 12px;
+    top: -5px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 12px;
+  }
+  button.novo-user{
+    position: absolute;
+    right: 45px;
+    top: -5px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 12px;
+  }
+
+  .form-alterar-senha{
+    .submit{
+      float: right;
+      position: relative;
+      top: 10px;
+    }
+  }
+
+  .form-novo-usuario{
+    button.submit{
+      float: right;
+      position: relative;
+      top: 10px;
+    }
+  }
+}

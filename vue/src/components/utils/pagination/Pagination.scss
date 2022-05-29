@@ -1,0 +1,49 @@
+
+.pagination{
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+
+  .page{
+    display: inline-block;
+    padding: 5px 10px;
+    vertical-align: middle;
+    background-color: #242526;
+    cursor: pointer;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+
+    &.active{
+      background-color: #ebebeb;
+      color: #242526;
+
+      &:hover{
+        background-color: #ebebeb;
+      }
+    }
+
+    &.disabled{
+      background-color: #767676;
+      color: #242526;
+      pointer-events: none;
+    }
+
+    &:hover:not(.disabled, .active){
+      background-color: #3e3e3e;
+    }
+
+    &:first-child{
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+    }
+    &:last-child{
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+    }
+  }
+}
