@@ -17,8 +17,9 @@ class ProjetosController extends Response{
   }
 
   public function getProjetos(){
-    $projetos = Grupo::where('user_id', Auth::id())->where('tipo', 'projetos')->with('sub')->orderBy('posicao')->orderBy('id', 'asc')->get();
-    $this->data($projetos);
+    $projetos = Grupo::where('user_id', Auth::id())->where('tipo', 'projetos')->where('publico', 0)->with('sub')->orderBy('posicao')->orderBy('id', 'asc')->get();
+    $publicos = Grupo::where('tipo', 'projetos')->where('publico', 1)->with('sub')->orderBy('posicao')->orderBy('id', 'asc')->get();
+    $this->append(compact('projetos', 'publicos'));
     return $this->response();
   }
 
@@ -54,7 +55,7 @@ class ProjetosController extends Response{
     $link->grupo_id = $data->grupo_id;
     $link->save();
 
-    $this->data($link);
+    $this->append(compact('link'));
     return $this->response();
   }
 
@@ -107,7 +108,27 @@ class ProjetosController extends Response{
     $grupo->user_id = Auth::id();
     $grupo->save();
 
-    $this->data($grupo);
+    $this->append(compact('grupo'));
+    return $this->response();
+  }
+
+  public function updatePublico(Request $request){
+    $data = (object) $request->only('id', 'publico');
+    $validator = Validator::make((array)$data,[
+      'id' => 'required|integer|exists:grupos,id',
+      'publico' => 'required|boolean'
+    ]);
+
+    if($validator->fails()){
+      $this->toast('error', $validator);
+      return $this->response(true);
+    }
+
+    $grupo = Grupo::find($data->id);
+    $grupo->publico = $data->publico;
+    $grupo->save();
+
+    $this->append(compact('grupo'));
     return $this->response();
   }
 

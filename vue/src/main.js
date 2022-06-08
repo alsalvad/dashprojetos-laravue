@@ -6,7 +6,7 @@ import ContextMenu from '@imengyu/vue3-context-menu';
 import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css';
 import CKEditor from '@ckeditor/ckeditor5-vue';
 
-const app = createApp(App);
+export const app = createApp(App);
 app.use(ContextMenu);
 app.use(Toast);
 app.use(CKEditor);

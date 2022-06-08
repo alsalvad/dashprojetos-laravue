@@ -1,5 +1,5 @@
 <template>
-  <Modal ref="modalProjeto" @updateProjetos="updateProjetos($event)" @closeModal="dragDisabled=false"/>
+  <Modal ref="modalProjeto" @updateGrupos="updateGrupos" @deleteGrupo="deleteGrupo" @novoGrupo="novoGrupo" @closeModal="dragDisabled=false"/>
   <nav class="sidebar">
 
     <p>
@@ -19,7 +19,10 @@
         <i class="fa fa-file action" @click="novoProjeto" title="Novo projeto"></i>
       </div>
     </h2>
-    <input type="text" v-model="inputHost" class="form-control input-host" :class="{active: editHostStatus}" placeholder="Insira o host">
+    <div class="input-group input-host" :class="{active: editHostStatus}">
+      <input type="text" v-model="inputHost" class="form-control " placeholder="Insira o host" @keyup.enter="toggleSetHost">
+      <button type="button" class="btn btn-sm btn-primary" @click="toggleSetHost"><i class="fa fa-check"></i></button>
+    </div>
     <hr>
 
     <ul class="root">
@@ -32,18 +35,18 @@
         ghost-class="ghost"
         @change="atualizarPosicao($event, false)"
       >
-        <template #item="{element, index}">
+        <template #item="{element, index}" :key="element.id">
           <li :class="{edit: editProjects}" class="group-item">
             <i class="handle"></i>
-            <a class="root" v-on:click.prevent="toggleExpand(index)">
+            <a class="root" v-on:click.prevent="toggleExpand(element.id)">
               {{ element.titulo }}
               <span>
-                <i class="fa fa-edit action" v-on:click.stop="editProjeto(index, element)"></i>
-                <i v-if="element.sub && element.sub.length" class="fa fa-chevron-right" :class="{active: isExpanded(index)}"></i>
+                <i class="fa fa-edit action" v-on:click.stop="editProjeto(element.id, element)"></i>
+                <i v-if="element.sub && element.sub.length" class="fa fa-chevron-right" :class="{active: isExpanded(element.id)}"></i>
               </span>
             </a>
 
-            <ul v-if="element.sub && element.sub.length" :class="{active: isExpanded(index)}">
+            <ul v-if="element.sub && element.sub.length" :class="{active: isExpanded(element.id)}">
               <draggable
                 v-model="element.sub"
                 item-key="id"
@@ -53,9 +56,60 @@
                 ghost-class="ghost"
                 @change="atualizarPosicao($event, index)"
               >
-                <template #item="{element, index}">
+                <template #item="{element, index}" :key="element.id">
                   <li class="sub">
                     <i class="handle"></i>
+                    <a :href="element.url" target="_blank">
+                      {{element.titulo}}
+                      <a :href="element.url_alternative" target="_blank" title="Acessar com host atual" v-if="inputHost">
+                        <i class="fa fa-external-link action"></i>
+                      </a>
+                    </a>
+                  </li>
+                </template>
+              </draggable>
+            </ul>
+          </li>
+        </template>
+      </draggable>
+    </ul>
+
+    <hr v-if="publicos.length">
+    <span v-if="publicos.length">Links Públicos</span>
+    <ul class="root">
+      <draggable
+        v-model="publicos"
+        item-key="id"
+        :disabled="dragDisabled"
+        handle=".handle"
+        group="publico"
+        ghost-class="ghost"
+        @change="atualizarPosicao($event, false, true)"
+      >
+        <template #item="{element, index}" :key="element.id">
+          <li :class="{edit: (editProjects && isAdmin)}" class="group-item">
+            <i class="handle" v-if="isAdmin"></i>
+            <a class="root" v-on:click.prevent="toggleExpand(element.id)">
+              {{ element.titulo }}
+              <span>
+                <i class="fa fa-edit action" v-on:click.stop="editProjeto(element.id, element)" v-if="isAdmin"></i>
+                <i v-if="element.sub && element.sub.length" class="fa fa-chevron-right" :class="{active: isExpanded(element.id)}"></i>
+              </span>
+            </a>
+
+            <ul v-if="element.sub && element.sub.length" :class="{active: isExpanded(element.id)}">
+              <draggable
+                v-model="element.sub"
+                item-key="id"
+                :disabled="dragDisabled"
+                handle=".handle"
+                group="sub_publico"
+                ghost-class="ghost"
+                @change="atualizarPosicao($event, index, true)"
+              >
+                <template #item="{element, index}" :key="element.id">
+                  <li class="sub">
+                    <i class="handle" v-if="isAdmin"></i>
                     <a :href="element.url" target="_blank">
                       {{element.titulo}}
                       <a :href="element.url_alternative" target="_blank" title="Acessar com host atual" v-if="inputHost">
@@ -83,6 +137,9 @@ import { useToast } from "vue-toastification";
 import { deleteCookie, getCookie, setCookie } from "../../functions/helpers";
 const toast = useToast();
 
+const isAdmin = (getCookie('isadmin') == 'true');
+
+
 let senhaDoDiaInicio = '04420';
 let date = new Date();
 let d = (date.getDate() + 20);
@@ -94,6 +151,7 @@ export default defineComponent({
   data() {
     return {
       projetos: [],
+      publicos: [],
       expandedGroup: [],
       editProjects: false,
       dragging: false,
@@ -101,7 +159,8 @@ export default defineComponent({
       senhaDoDiaInicio: senhaDoDiaInicio,
       senhaDoDiaFim: senhaDoDiaFim,
       inputHost: host,
-      editHostStatus: false
+      editHostStatus: false,
+      isAdmin: isAdmin
     };
   },
   components:{
@@ -118,24 +177,30 @@ export default defineComponent({
         }
         return;
       }
-      this.projetos = res.data;
+      this.projetos = res.projetos;
+      this.publicos = res.publicos;
+      this.applyUrlAlternative();
     });
   },
   emits: ['showLogin', 'showHelp'],
-  watch: {
-    projetos(projetos){
-      this.applyUrlAlternative();
-    }
-  },
   methods: {
-    applyUrlAlternative(oldHost='{host}', newHost=null){
+    applyUrlAlternative(oldHost='{host}', newHost){
       newHost = newHost || getCookie('host_url_alternative');
-      this.projetos.map(p => {
-        p.sub.map(sub => {
-          if(newHost)
-          sub.url_alternative = sub.url_alternative.replace(oldHost, newHost);
+        setTimeout(() => {
+          this.projetos.map(p => {
+            p.sub.map(sub => {
+              if(newHost)
+                sub.url_alternative = sub.url_alternative.replace(oldHost, newHost);
+            });
+          });
+
+          this.publicos.map(p => {
+            p.sub.map(sub => {
+              if(newHost)
+                sub.url_alternative = sub.url_alternative.replace(oldHost, newHost);
+            });
         });
-      });
+      },500);
     },
     copiarSenha(fim=false){
       toast.success('Senha copiada!');
@@ -145,14 +210,15 @@ export default defineComponent({
       }
       navigator.clipboard.writeText(senhaDoDiaInicio + senhaDoDiaFim);
     },
-    atualizarPosicao(e, sub) {
+    atualizarPosicao(e, idSub, publico = false) {
       let data = [];
       let tipo = 'grupos';
-      let array = this.projetos;
+      let grupo = publico ? 'publicos' : 'projetos';
+      let array = this[grupo];
 
-      if(sub != false){
+      if(typeof idSub == 'number'){
         tipo = 'projetos';
-        array = this.projetos[sub].sub;
+        array = this[grupo][idSub].sub;
       }
 
       array.map(function(item, index){
@@ -163,21 +229,30 @@ export default defineComponent({
         if(res.data.errorMsg) toast.error(res.data.errorMsg)
       });
     },
-    updateProjetos(e){
-      if(e.titulo){
-        this.projetos[e.key].titulo = e.titulo;
+    novoGrupo(grupo){
+      this.projetos.push(grupo);
+    },
+    deleteGrupo(grupo){
+      if(grupo.publico){
+        let key = this.publicos.findIndex(item => item.id == grupo.id);
+        this.publicos.splice(key, 1);
         return;
       }
-      if(e.delete) {
-        this.projetos.splice(e.key, 1);
+
+      let key = this.projetos.findIndex(item => item.id == grupo.id);
+      this.projetos.splice(key, 1);
+    },
+    updateGrupos(grupo){
+      if(grupo.publico){
+        let key = this.projetos.findIndex(item => item.id == grupo.id);
+        this.projetos.splice(key, 1);
+        this.publicos.push(grupo);
         return;
       }
-      if(e.novo){
-        this.projetos.push(e.grupo);
-        let key = this.projetos.length;
-        this.$refs.modalProjeto.showModal(key, e.grupo);
-        return;
-      }
+
+      let key = this.publicos.findIndex(item => item.id == grupo.id);
+      this.publicos.splice(key, 1);
+      this.projetos.push(grupo);
     },
     novoProjeto(){
       this.$refs.modalProjeto.showModal();
@@ -201,7 +276,8 @@ export default defineComponent({
     },
     toggleSetHost(){
       this.editHostStatus = !this.editHostStatus;
-      this.applyUrlAlternative(getCookie('host_url_alternative'), this.inputHost);
+      let old = getCookie('host_url_alternative');
+      this.applyUrlAlternative(old || '{host}', this.inputHost);
       setCookie('host_url_alternative', this.inputHost, 600);
       if(!this.editHostStatus){
         toast.success('Host salvo');

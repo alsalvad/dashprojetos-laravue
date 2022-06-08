@@ -9,6 +9,7 @@
   pointer-events: none;
   bottom: 100%;
   color: #18191a;
+  overflow: auto;
 
   &.active{
     opacity: 1;

@@ -6,11 +6,15 @@
         <button class="btn btn-primary" type="button" @click="saveNomeGrupo"><i class="fa fa-check"></i></button>
       </div>
 
-      <button class="btn btn-danger float-right" @click="excluirGrupo" v-if="grupoInfo.id">Excluir</button>
+      <label class="checkbox mt-2" v-if="isAdmin && grupo.id">
+        <input v-model="inputPublico" type="checkbox" @change="updatePublico">
+        Público
+      </label>
+      <button class="btn btn-danger float-right" @click="excluirGrupo" v-if="grupo.id">Excluir</button>
     </div>
     <div class="body">
 
-      <div class="row">
+      <div class="row" :class="{hide: !this.grupo.id}">
         <label>Novo link</label>
         <div class="input-group col-md-12 mb-4">
           <input type="text" class="form-control" placeholder="Título" v-model="novoLinkTitulo">
@@ -48,6 +52,7 @@
 import { defineComponent } from "vue";
 import api from "@/services/api";
 import { useToast } from "vue-toastification";
+import { getCookie } from "@/functions/helpers";
 
 const toast = useToast();
 
@@ -58,23 +63,26 @@ export default defineComponent({
   watch :{
     links: {
       handler(val){
-        this.grupoInfo.sub = val;
+        this.grupo.sub = val;
       },
       deep: true
     }
   },
+  emits: ['deleteGrupo', 'closeModal', 'novoGrupo', 'updateGrupos'],
   methods: {
     initialState(reset=false){
       let data =  {
         key: null,
         activeModal: false,
         inputNomeGrupo: '',
-        grupoInfo: {},
+        grupo: {},
         links: [],
         inputTitulo: [],
         inputUrl: [],
+        inputPublico: false,
         novoLinkTitulo: '',
         novoLinkUrl: '',
+        isAdmin: (getCookie('isadmin') == 'true')
       }
 
       if(reset) Object.assign(this.$data, data);
@@ -88,14 +96,15 @@ export default defineComponent({
         return;
       }
 
-      api.get(`/projetos/links/${grupo.id}`).then(res => {
-        if(res.data.error) return;
+      api.get(`/projetos/links/${grupo.id}`).then(({data}) => {
+        if(data.error) return;
 
-        this.grupoInfo = grupo;
+        this.grupo = grupo;
         this.inputNomeGrupo = grupo.titulo;
-        this.links = res.data.data;
+        this.links = data.data;
+        this.inputPublico = grupo.publico == 1;
 
-        res.data.data.forEach((link) => {
+        data.data.forEach((link) => {
           this.inputTitulo[link.id] = link.titulo;
           this.inputUrl[link.id] = link.url;
         });
@@ -108,7 +117,7 @@ export default defineComponent({
       this.$emit('closeModal')
     },
     inserirLink(){
-      if(!this.grupoInfo.id) return toast.error('Informe o nome do grupo');
+      if(!this.grupo.id) return toast.error('Informe o nome do grupo');
       let titulo = this.novoLinkTitulo;
       let url = this.novoLinkUrl;
 
@@ -121,16 +130,16 @@ export default defineComponent({
         return;
       }
 
-      api.post('/projetos/link', {titulo: titulo, url: url, grupo_id: this.grupoInfo.id}).then(res => {
-        if(res.data.error) return;
-        let data = res.data.data;
+      api.post('/projetos/link', {titulo: titulo, url: url, grupo_id: this.grupo.id}).then(({data}) => {
+        if(data.error) return;
         toast.success('Link inserido');
-        this.links.push(res.data.data);
+        this.links.push(data.link);
+
         this.novoLinkTitulo = '';
         this.novoLinkUrl = '';
 
-        this.inputTitulo[data.id] = data.titulo;
-        this.inputUrl[data.id] = data.url;
+        this.inputTitulo[data.link.id] = data.link.titulo;
+        this.inputUrl[data.link.id] = data.link.url;
       });
     },
     updateLink(key, link){
@@ -146,10 +155,18 @@ export default defineComponent({
         return;
       }
 
-      api.put('/projetos/link', {id: link.id, titulo: titulo, url: url, grupo_id: this.grupoInfo.id}).then(res => {
-        if(res.data.error) return;
-        toast.success('Link atualizado')
-        this.links[key] = res.data.data;
+      api.put('/projetos/link', {id: link.id, titulo: titulo, url: url, grupo_id: this.grupo.id}).then(({data}) => {
+        if(data.error) return;
+        toast.success('Link atualizado');
+        this.links[key] = data.link;
+      });
+    },
+    updatePublico(){
+      if(!this.grupo.id) return;
+
+      api.put('/projetos/grupo/publico', {id: this.grupo.id, publico: this.inputPublico}).then(({data}) => {
+        if(data.error) return;
+          this.$emit('updateGrupos', data.grupo);
       });
     },
     deletarLink(key, link){
@@ -170,23 +187,21 @@ export default defineComponent({
       let data = {titulo: titulo};
       if(this.key != null){
         metodo = 'put';
-        data.id = this.grupoInfo.id;
+        data.id = this.grupo.id;
       }
 
-      api[metodo]('/projetos/grupo', data).then(res => {
-        if(res.data.errorMsg){
-          toast.error(res.data.errorMsg);
+      api[metodo]('/projetos/grupo', data).then(({data}) => {
+        if(data.error) return;
+
+        if(this.grupo.id){
+          this.grupo.titulo = titulo;
+          toast.success('Grupo atualizado');
           return;
         }
 
-        this.grupoInfo = res.data.data;
-        if(this.key != null){
-          toast.success('Grupo atualizado');
-          this.$emit('updateProjetos', {key: this.key, titulo: this.inputNomeGrupo});
-          return;
-        }
+        this.grupo = data.grupo;
+        this.$emit('novoGrupo', data.grupo);
         toast.success('Grupo adicionado');
-        this.$emit('updateProjetos', {novo: true, grupo: res.data.data});
       });
     },
     excluirGrupo(e){
@@ -198,11 +213,11 @@ export default defineComponent({
             icon: 'fa fa-trash',
             label: 'Confirmar',
             onClick: () => {
-              api.delete(`/projetos/grupo/${this.grupoInfo.id}`).then(res => {
-                if(res.data.error) return;
+              api.delete(`/projetos/grupo/${this.grupo.id}`).then(({data}) => {
+                if(data.error) return;
                 toast.success('Projeto excluído');
                 this.dismissModal();
-                this.$emit('updateProjetos', {key: this.key, delete: true});
+                this.$emit('deleteGrupo', this.grupo);
                 this.initialState();
               });
             }

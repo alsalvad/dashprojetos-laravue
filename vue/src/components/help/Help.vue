@@ -4,7 +4,7 @@
 
       <div class="col-lg-12">
         <i class="fa fa-times" tile="Fechar" @click="hideHelp"></i>
-        <div class="row mt-5">
+        <div class="row py-5">
           <div class="col-md-6">
             <div class="card">
               <div class="card-header">
@@ -34,6 +34,20 @@
                     </td>
                     <td>
                       Ao habilitar a edição de projetos, arraste o projeto segurando o ícone <b>::</b> para reordená-lo
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <b>http</b>
+                    </td>
+                    <td>
+                      Utilize para criar um host alternativo. <br>
+                      Útil para integração de apis em que é necessário acessar a url por um serviço de túnel, como Ngrok.
+                      Ao informar o host, ao clicar em <i class="fa fa-external-link action"></i>, você acessará o link com o host padrão substituído pelo host informado.
+                      <hr>
+                      Ex.: Ao informar o host "hotdog-com-pure"<br>
+                      O link original acessa <i>http://google.com/endpoint</i> <br>
+                      Com host alternativo, acessará <i>http://hotdog-com-pure.com/endpoint</i>
                     </td>
                   </tr>
                   <tr>

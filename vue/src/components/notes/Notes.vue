@@ -117,7 +117,9 @@
         novoGrupoInput: '',
         editGrupoInput: '',
         mask: mask,
-        loading: true
+        loading: true,
+        inputTeste: '',
+        inputTeste2: ''
       };
     },
     mounted(){

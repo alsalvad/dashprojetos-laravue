@@ -1,10 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NotesController;
-use App\Http\Controllers\GroupsController;
 use App\Http\Controllers\ProjetosController;
 
 Route::prefix('/auth')->name('auth.')->group(function(){
@@ -42,6 +40,7 @@ Route::prefix('/projetos')->name('projetos.')->group(function(){
 
     Route::post('/grupo', 'saveGrupo')->name('novoGrupo');
     Route::put('/grupo', 'saveGrupo')->name('editarGrupo');
+    Route::put('/grupo/publico', 'updatePublico')->name('updatePublico');
     Route::delete('/grupo/{id}', 'deleteGrupo')->name('deleteGrupo');
   });
 });

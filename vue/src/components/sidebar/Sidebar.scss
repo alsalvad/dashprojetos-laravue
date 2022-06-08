@@ -85,19 +85,18 @@ i.ajuda{
   .input-host{
     min-height: 0;
     max-height: 0;
-    // max-width: 0;
     background-color: #24272c;
     border-color: #24272c;
     margin: 0;
     font-size: 14px;
     padding: 0 8px;
     transition: all .2s;
+    overflow: hidden;
 
     &.active{
       min-height: 30px;
-      max-height: 30px;
+      max-height: 50px;
       max-width: 100%;
-      background-color: #fff;
       padding: 8px;
     }
   }
