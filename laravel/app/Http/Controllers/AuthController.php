@@ -113,6 +113,13 @@ class AuthController extends Response {
       $user->token_dashboard = md5(date('dmYHis').rand(0,99));
       $user->save();
 
+      $grupo = new Grupo;
+      $grupo->titulo = 'Geral';
+      $grupo->tipo = 'notes';
+      $grupo->user_id = $user->id;
+      $grupo->default = 1;
+      $grupo->save();
+
       DB::commit();
       $this->toast('success', 'Usuário criado');
       return $this->response();

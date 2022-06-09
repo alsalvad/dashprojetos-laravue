@@ -225,7 +225,7 @@ export default defineComponent({
         data.push({id: item.id, posicao: (index + 1)});
       });
 
-      api.post(`/projetos/atualizar-posicao/`, {tipo: tipo, campos: data}).then(res => {
+      api.post(`/projetos/atualizar-posicao`, {tipo: tipo, campos: data}).then(res => {
         if(res.data.errorMsg) toast.error(res.data.errorMsg)
       });
     },
