@@ -16,3 +16,7 @@ Esse dashboard permite criar acessos rápidos para múltiplas páginas, separado
 9. npm install <br>
 10. npm run dev <br>
 
+![alt text](https://github.com/alsalvad/dashprojetos-laravue/blob/master/laravel/resources/screen/01.png?raw=true)
+![alt text](https://github.com/alsalvad/dashprojetos-laravue/blob/master/laravel/resources/screen/02.png?raw=true)
+![alt text](https://github.com/alsalvad/dashprojetos-laravue/blob/master/laravel/resources/screen/03.png?raw=true)
+![alt text](https://github.com/alsalvad/dashprojetos-laravue/blob/master/laravel/resources/screen/04.png?raw=true)
